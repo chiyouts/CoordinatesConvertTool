@@ -37,7 +37,7 @@ namespace GeoJsonCoordinatesTranf
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 originFilePath.Text = openFileDialog.FileName;
-                m_chooseFileName = openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\")+1);
+                m_chooseFileName = openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1);
                 m_chooseFileName = m_chooseFileName.Split('.')[0];
             }
             else
@@ -48,6 +48,16 @@ namespace GeoJsonCoordinatesTranf
 
         private void ChangeButton_Click(object sender, EventArgs e)
         {
+            if (m_changeType.Equals(string.Empty))
+            {
+                MessageBox.Show("请选择转换类型");
+                return;
+            }
+            if (m_chooseFileName.Equals(string.Empty))
+            {
+                MessageBox.Show("请选择需要转换的文件");
+                return;
+            }
             StreamReader sr = new StreamReader(originFilePath.Text, Encoding.UTF8);
             JObject jsonData = JObject.Parse(sr.ReadToEnd());
 
@@ -173,7 +183,7 @@ namespace GeoJsonCoordinatesTranf
         #region CheckBox
         private void WgsToGcj_CheckedChanged(object sender, EventArgs e)
         {
-            if (!WgsToGcj.Checked)
+            if (WgsToGcj.Checked)
             {
                 if (!m_changeTypeList.Contains(WgsToGcj))
                 {
@@ -182,11 +192,15 @@ namespace GeoJsonCoordinatesTranf
                 m_changeType = WgsToGcj.Name;
                 ChangeCheckBoxState(m_changeType);
             }
+            else
+            {
+                m_changeType = string.Empty;
+            }
         }
 
         private void GcjToWgs_CheckedChanged(object sender, EventArgs e)
         {
-            if (!GcjToWgs.Checked)
+            if (GcjToWgs.Checked)
             {
                 if (!m_changeTypeList.Contains(GcjToWgs))
                 {
@@ -195,11 +209,15 @@ namespace GeoJsonCoordinatesTranf
                 m_changeType = GcjToWgs.Name;
                 ChangeCheckBoxState(m_changeType);
             }
+            else
+            {
+                m_changeType = string.Empty;
+            }
         }
 
         private void WgsToBd_CheckedChanged(object sender, EventArgs e)
         {
-            if (!WgsToBd.Checked)
+            if (WgsToBd.Checked)
             {
                 if (!m_changeTypeList.Contains(WgsToBd))
                 {
@@ -208,11 +226,15 @@ namespace GeoJsonCoordinatesTranf
                 m_changeType = WgsToBd.Name;
                 ChangeCheckBoxState(m_changeType);
             }
+            else
+            {
+                m_changeType = string.Empty;
+            }
         }
 
         private void GcjToBd_CheckedChanged(object sender, EventArgs e)
         {
-            if (!GcjToBd.Checked)
+            if (GcjToBd.Checked)
             {
                 if (!m_changeTypeList.Contains(GcjToBd))
                 {
@@ -221,11 +243,15 @@ namespace GeoJsonCoordinatesTranf
                 m_changeType = GcjToBd.Name;
                 ChangeCheckBoxState(m_changeType);
             }
+            else
+            {
+                m_changeType = string.Empty;
+            }
         }
 
         private void BdToWgs_CheckedChanged(object sender, EventArgs e)
         {
-            if (!BdToWgs.Checked)
+            if (BdToWgs.Checked)
             {
                 if (!m_changeTypeList.Contains(BdToWgs))
                 {
@@ -234,11 +260,15 @@ namespace GeoJsonCoordinatesTranf
                 m_changeType = BdToWgs.Name;
                 ChangeCheckBoxState(m_changeType);
             }
+            else
+            {
+                m_changeType = string.Empty;
+            }
         }
 
         private void BdToGcj_CheckedChanged(object sender, EventArgs e)
         {
-            if (!BdToGcj.Checked)
+            if (BdToGcj.Checked)
             {
                 if (!m_changeTypeList.Contains(BdToGcj))
                 {
@@ -246,6 +276,10 @@ namespace GeoJsonCoordinatesTranf
                 }
                 m_changeType = BdToGcj.Name;
                 ChangeCheckBoxState(m_changeType);
+            }
+            else
+            {
+                m_changeType = string.Empty;
             }
         }
 
@@ -267,7 +301,7 @@ namespace GeoJsonCoordinatesTranf
 
 
         #region 转换坐标
-        
+
 
         /// <summary>
         /// 转换坐标
