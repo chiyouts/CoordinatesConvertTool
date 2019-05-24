@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConvertThread.cs" />
     <Compile Include="ConvertGPS.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

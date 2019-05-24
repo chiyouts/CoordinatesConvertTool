@@ -36,12 +36,13 @@
             this.ChangeButton = new System.Windows.Forms.Button();
             this.ChangeResultTextBox = new System.Windows.Forms.RichTextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.WgsToGcj = new System.Windows.Forms.CheckBox();
-            this.WgsToBd = new System.Windows.Forms.CheckBox();
-            this.GcjToWgs = new System.Windows.Forms.CheckBox();
-            this.GcjToBd = new System.Windows.Forms.CheckBox();
-            this.BdToWgs = new System.Windows.Forms.CheckBox();
-            this.BdToGcj = new System.Windows.Forms.CheckBox();
+            this.ConvertProgressBar = new System.Windows.Forms.ProgressBar();
+            this.WgsToGcj = new System.Windows.Forms.RadioButton();
+            this.WgsToBd = new System.Windows.Forms.RadioButton();
+            this.GcjToWgs = new System.Windows.Forms.RadioButton();
+            this.GcjToBd = new System.Windows.Forms.RadioButton();
+            this.BdToWgs = new System.Windows.Forms.RadioButton();
+            this.BdToGcj = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // ChooseOringinFilePath
@@ -53,28 +54,6 @@
             this.ChooseOringinFilePath.Text = "浏览...";
             this.ChooseOringinFilePath.UseVisualStyleBackColor = true;
             this.ChooseOringinFilePath.Click += new System.EventHandler(this.ChooseOringinFilePath_Click);
-            // 
-            // WgsToGcj
-            // 
-            this.WgsToGcj.AutoSize = true;
-            this.WgsToGcj.Location = new System.Drawing.Point(20, 65);
-            this.WgsToGcj.Name = "WgsToGcj";
-            this.WgsToGcj.Size = new System.Drawing.Size(124, 19);
-            this.WgsToGcj.TabIndex = 2;
-            this.WgsToGcj.Text = "WGS84 转 GCJ";
-            this.WgsToGcj.UseVisualStyleBackColor = true;
-            this.WgsToGcj.CheckedChanged += new System.EventHandler(this.WgsToGcj_CheckedChanged);
-            // 
-            // GcjToWgs
-            // 
-            this.GcjToWgs.AutoSize = true;
-            this.GcjToWgs.Location = new System.Drawing.Point(20, 154);
-            this.GcjToWgs.Name = "GcjToWgs";
-            this.GcjToWgs.Size = new System.Drawing.Size(124, 19);
-            this.GcjToWgs.TabIndex = 3;
-            this.GcjToWgs.Text = "GCJ 转 WGS84";
-            this.GcjToWgs.UseVisualStyleBackColor = true;
-            this.GcjToWgs.CheckedChanged += new System.EventHandler(this.GcjToWgs_CheckedChanged);
             // 
             // label1
             // 
@@ -138,49 +117,84 @@
             this.label3.TabIndex = 10;
             this.label3.Text = "转换结果显示：";
             // 
+            // ConvertProgressBar
+            // 
+            this.ConvertProgressBar.Location = new System.Drawing.Point(354, 19);
+            this.ConvertProgressBar.Name = "ConvertProgressBar";
+            this.ConvertProgressBar.Size = new System.Drawing.Size(432, 15);
+            this.ConvertProgressBar.TabIndex = 15;
+            // 
+            // WgsToGcj
+            // 
+            this.WgsToGcj.AutoSize = true;
+            this.WgsToGcj.Location = new System.Drawing.Point(20, 63);
+            this.WgsToGcj.Name = "WgsToGcj";
+            this.WgsToGcj.Size = new System.Drawing.Size(123, 19);
+            this.WgsToGcj.TabIndex = 16;
+            this.WgsToGcj.TabStop = true;
+            this.WgsToGcj.Text = "WGS84 转 GCJ";
+            this.WgsToGcj.UseVisualStyleBackColor = true;
+            this.WgsToGcj.CheckedChanged += new System.EventHandler(this.WgsToGcj_CheckedChanged_1);
+            // 
             // WgsToBd
             // 
             this.WgsToBd.AutoSize = true;
-            this.WgsToBd.Location = new System.Drawing.Point(20, 109);
+            this.WgsToBd.Location = new System.Drawing.Point(20, 105);
             this.WgsToBd.Name = "WgsToBd";
-            this.WgsToBd.Size = new System.Drawing.Size(140, 19);
-            this.WgsToBd.TabIndex = 11;
+            this.WgsToBd.Size = new System.Drawing.Size(139, 19);
+            this.WgsToBd.TabIndex = 17;
+            this.WgsToBd.TabStop = true;
             this.WgsToBd.Text = "WGS84 转 BD-09";
             this.WgsToBd.UseVisualStyleBackColor = true;
-            this.WgsToBd.CheckedChanged += new System.EventHandler(this.WgsToBd_CheckedChanged);
+            this.WgsToBd.CheckedChanged += new System.EventHandler(this.WgsToBd_CheckedChanged_1);
+            // 
+            // GcjToWgs
+            // 
+            this.GcjToWgs.AutoSize = true;
+            this.GcjToWgs.Location = new System.Drawing.Point(20, 151);
+            this.GcjToWgs.Name = "GcjToWgs";
+            this.GcjToWgs.Size = new System.Drawing.Size(123, 19);
+            this.GcjToWgs.TabIndex = 18;
+            this.GcjToWgs.TabStop = true;
+            this.GcjToWgs.Text = "GCJ 转 WGS84";
+            this.GcjToWgs.UseVisualStyleBackColor = true;
+            this.GcjToWgs.CheckedChanged += new System.EventHandler(this.GcjToWgs_CheckedChanged_1);
             // 
             // GcjToBd
             // 
             this.GcjToBd.AutoSize = true;
-            this.GcjToBd.Location = new System.Drawing.Point(20, 195);
+            this.GcjToBd.Location = new System.Drawing.Point(20, 192);
             this.GcjToBd.Name = "GcjToBd";
-            this.GcjToBd.Size = new System.Drawing.Size(124, 19);
-            this.GcjToBd.TabIndex = 12;
+            this.GcjToBd.Size = new System.Drawing.Size(123, 19);
+            this.GcjToBd.TabIndex = 19;
+            this.GcjToBd.TabStop = true;
             this.GcjToBd.Text = "GCJ 转 BD-09";
             this.GcjToBd.UseVisualStyleBackColor = true;
-            this.GcjToBd.CheckedChanged += new System.EventHandler(this.GcjToBd_CheckedChanged);
+            this.GcjToBd.CheckedChanged += new System.EventHandler(this.GcjToBd_CheckedChanged_1);
             // 
             // BdToWgs
             // 
             this.BdToWgs.AutoSize = true;
-            this.BdToWgs.Location = new System.Drawing.Point(20, 239);
+            this.BdToWgs.Location = new System.Drawing.Point(20, 236);
             this.BdToWgs.Name = "BdToWgs";
-            this.BdToWgs.Size = new System.Drawing.Size(140, 19);
-            this.BdToWgs.TabIndex = 13;
+            this.BdToWgs.Size = new System.Drawing.Size(139, 19);
+            this.BdToWgs.TabIndex = 20;
+            this.BdToWgs.TabStop = true;
             this.BdToWgs.Text = "BD-09 转 WGS84";
             this.BdToWgs.UseVisualStyleBackColor = true;
-            this.BdToWgs.CheckedChanged += new System.EventHandler(this.BdToWgs_CheckedChanged);
+            this.BdToWgs.CheckedChanged += new System.EventHandler(this.BdToWgs_CheckedChanged_1);
             // 
             // BdToGcj
             // 
             this.BdToGcj.AutoSize = true;
             this.BdToGcj.Location = new System.Drawing.Point(20, 284);
             this.BdToGcj.Name = "BdToGcj";
-            this.BdToGcj.Size = new System.Drawing.Size(124, 19);
-            this.BdToGcj.TabIndex = 14;
+            this.BdToGcj.Size = new System.Drawing.Size(123, 19);
+            this.BdToGcj.TabIndex = 21;
+            this.BdToGcj.TabStop = true;
             this.BdToGcj.Text = "BD-09 转 GCJ";
             this.BdToGcj.UseVisualStyleBackColor = true;
-            this.BdToGcj.CheckedChanged += new System.EventHandler(this.BdToGcj_CheckedChanged);
+            this.BdToGcj.CheckedChanged += new System.EventHandler(this.BdToGcj_CheckedChanged_1);
             // 
             // Form1
             // 
@@ -190,7 +204,10 @@
             this.Controls.Add(this.BdToGcj);
             this.Controls.Add(this.BdToWgs);
             this.Controls.Add(this.GcjToBd);
+            this.Controls.Add(this.GcjToWgs);
             this.Controls.Add(this.WgsToBd);
+            this.Controls.Add(this.WgsToGcj);
+            this.Controls.Add(this.ConvertProgressBar);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.ChangeResultTextBox);
             this.Controls.Add(this.ChangeButton);
@@ -198,8 +215,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.originFilePath);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.GcjToWgs);
-            this.Controls.Add(this.WgsToGcj);
             this.Controls.Add(this.ChooseOringinFilePath);
             this.Name = "Form1";
             this.Text = "geojson坐标系转换工具";
@@ -211,8 +226,6 @@
         #endregion
 
         private System.Windows.Forms.Button ChooseOringinFilePath;
-        private System.Windows.Forms.CheckBox WgsToGcj;
-        private System.Windows.Forms.CheckBox GcjToWgs;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox originFilePath;
         private System.Windows.Forms.Label label2;
@@ -220,10 +233,13 @@
         private System.Windows.Forms.Button ChangeButton;
         private System.Windows.Forms.RichTextBox ChangeResultTextBox;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.CheckBox WgsToBd;
-        private System.Windows.Forms.CheckBox GcjToBd;
-        private System.Windows.Forms.CheckBox BdToWgs;
-        private System.Windows.Forms.CheckBox BdToGcj;
+        private System.Windows.Forms.ProgressBar ConvertProgressBar;
+        private System.Windows.Forms.RadioButton WgsToGcj;
+        private System.Windows.Forms.RadioButton WgsToBd;
+        private System.Windows.Forms.RadioButton GcjToWgs;
+        private System.Windows.Forms.RadioButton GcjToBd;
+        private System.Windows.Forms.RadioButton BdToWgs;
+        private System.Windows.Forms.RadioButton BdToGcj;
     }
 }
 

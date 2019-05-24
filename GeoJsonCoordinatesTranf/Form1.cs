@@ -18,7 +18,11 @@ namespace GeoJsonCoordinatesTranf
         public Form1()
         {
             InitializeComponent();
+            m_convertThread = new ConvertThread();
+            m_convertThread.setProgressBar += SetProgressBar;
         }
+
+        private ConvertThread m_convertThread;
 
         private string m_changeType = string.Empty;
 
@@ -59,93 +63,7 @@ namespace GeoJsonCoordinatesTranf
                 return;
             }
             StreamReader sr = new StreamReader(originFilePath.Text, Encoding.UTF8);
-            JObject jsonData = JObject.Parse(sr.ReadToEnd());
-
-            List<JToken> features = jsonData["features"].ToList();
-
-            for (int i = 0; i < features.Count; i++)
-            {
-                if (!string.IsNullOrEmpty(features[i]["geometry"].ToString()))
-                {
-                    string geometryType = features[i]["geometry"]["type"].ToString();
-                    string[] convertedLngLatList;
-                    switch (geometryType)
-                    {
-                        case "Point":
-                            convertedLngLatList = ConvertCoord(features[i]["geometry"]["coordinates"].ToList());
-                            features[i]["geometry"]["coordinates"][0] = convertedLngLatList[0];
-                            features[i]["geometry"]["coordinates"][1] = convertedLngLatList[1];
-                            break;
-                        case "MultiPoint":
-                            List<JToken> mpCoordinatesList = features[i]["geometry"]["coordinates"].ToList();
-                            for (int j = 0; j < mpCoordinatesList.Count; j++)
-                            {
-                                convertedLngLatList = ConvertCoord(mpCoordinatesList[j].ToList());
-                                mpCoordinatesList[j][0] = convertedLngLatList[0];
-                                mpCoordinatesList[j][1] = convertedLngLatList[1];
-                            }
-                            break;
-                        case "LineString":
-                            List<JToken> lsCoordinatesList = features[i]["geometry"]["coordinates"].ToList();
-                            for (int j = 0; j < lsCoordinatesList.Count; j++)
-                            {
-                                convertedLngLatList = ConvertCoord(lsCoordinatesList[j].ToList());
-                                lsCoordinatesList[j][0] = convertedLngLatList[0];
-                                lsCoordinatesList[j][1] = convertedLngLatList[1];
-                            }
-                            break;
-                        case "MultiLineString":
-                            List<JToken> msCoordinatesList = features[i]["geometry"]["coordinates"].ToList();
-                            for (int j = 0; j < msCoordinatesList.Count; j++)
-                            {
-                                List<JToken> coor = msCoordinatesList[j].ToList();
-                                for (int k = 0; k < coor.Count; k++)
-                                {
-                                    convertedLngLatList = ConvertCoord(coor[k].ToList());
-                                    coor[k][0] = convertedLngLatList[0];
-                                    coor[k][1] = convertedLngLatList[1];
-                                }
-                            }
-                            break;
-                        case "Polygon":
-                            List<JToken> pCoordinatesList = features[i]["geometry"]["coordinates"].ToList();
-                            for (int j = 0; j < pCoordinatesList.Count; j++)
-                            {
-                                List<JToken> coor = pCoordinatesList[j].ToList();
-                                for (int k = 0; k < coor.Count; k++)
-                                {
-                                    convertedLngLatList = ConvertCoord(coor[k].ToList());
-                                    coor[k][0] = convertedLngLatList[0];
-                                    coor[k][1] = convertedLngLatList[1];
-                                }
-                            }
-                            break;
-                        case "MultiPolygon":
-                            List<JToken> mpcoordinatesList = features[i]["geometry"]["coordinates"].ToList();
-                            for (int g = 0; g < mpcoordinatesList.Count; g++)
-                            {
-                                List<JToken> coorList = mpcoordinatesList[g].ToList();
-                                for (int j = 0; j < coorList.Count; j++)
-                                {
-                                    List<JToken> coor = coorList[j].ToList();
-                                    for (int k = 0; k < coor.Count; k++)
-                                    {
-                                        convertedLngLatList = ConvertCoord(coor[k].ToList());
-                                        coor[k][0] = convertedLngLatList[0];
-                                        coor[k][1] = convertedLngLatList[1];
-                                    }
-                                }
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            ChangeResultTextBox.Text = jsonData.ToString();
-            m_changeResultText = jsonData.ToString();
-            MessageBox.Show("转换完成");
+            m_convertThread.StartConvertThread(m_changeType, sr.ReadToEnd(), ConvertOver);
         }
 
 
@@ -180,226 +98,81 @@ namespace GeoJsonCoordinatesTranf
             }
         }
 
-        #region CheckBox
-        private void WgsToGcj_CheckedChanged(object sender, EventArgs e)
+        #region RadioButton
+
+        private void WgsToGcj_CheckedChanged_1(object sender, EventArgs e)
         {
             if (WgsToGcj.Checked)
             {
-                if (!m_changeTypeList.Contains(WgsToGcj))
-                {
-                    m_changeTypeList.Add(WgsToGcj);
-                }
                 m_changeType = WgsToGcj.Name;
-                ChangeCheckBoxState(m_changeType);
-            }
-            else
-            {
-                m_changeType = string.Empty;
             }
         }
 
-        private void GcjToWgs_CheckedChanged(object sender, EventArgs e)
-        {
-            if (GcjToWgs.Checked)
-            {
-                if (!m_changeTypeList.Contains(GcjToWgs))
-                {
-                    m_changeTypeList.Add(GcjToWgs);
-                }
-                m_changeType = GcjToWgs.Name;
-                ChangeCheckBoxState(m_changeType);
-            }
-            else
-            {
-                m_changeType = string.Empty;
-            }
-        }
-
-        private void WgsToBd_CheckedChanged(object sender, EventArgs e)
+        private void WgsToBd_CheckedChanged_1(object sender, EventArgs e)
         {
             if (WgsToBd.Checked)
             {
-                if (!m_changeTypeList.Contains(WgsToBd))
-                {
-                    m_changeTypeList.Add(WgsToBd);
-                }
                 m_changeType = WgsToBd.Name;
-                ChangeCheckBoxState(m_changeType);
-            }
-            else
-            {
-                m_changeType = string.Empty;
             }
         }
 
-        private void GcjToBd_CheckedChanged(object sender, EventArgs e)
+        private void GcjToWgs_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (GcjToWgs.Checked)
+            {
+                m_changeType = GcjToWgs.Name;
+            }
+        }
+
+        private void GcjToBd_CheckedChanged_1(object sender, EventArgs e)
         {
             if (GcjToBd.Checked)
             {
-                if (!m_changeTypeList.Contains(GcjToBd))
-                {
-                    m_changeTypeList.Add(GcjToBd);
-                }
                 m_changeType = GcjToBd.Name;
-                ChangeCheckBoxState(m_changeType);
-            }
-            else
-            {
-                m_changeType = string.Empty;
             }
         }
 
-        private void BdToWgs_CheckedChanged(object sender, EventArgs e)
+        private void BdToWgs_CheckedChanged_1(object sender, EventArgs e)
         {
             if (BdToWgs.Checked)
             {
-                if (!m_changeTypeList.Contains(BdToWgs))
-                {
-                    m_changeTypeList.Add(BdToWgs);
-                }
                 m_changeType = BdToWgs.Name;
-                ChangeCheckBoxState(m_changeType);
-            }
-            else
-            {
-                m_changeType = string.Empty;
             }
         }
 
-        private void BdToGcj_CheckedChanged(object sender, EventArgs e)
+        private void BdToGcj_CheckedChanged_1(object sender, EventArgs e)
         {
             if (BdToGcj.Checked)
             {
-                if (!m_changeTypeList.Contains(BdToGcj))
-                {
-                    m_changeTypeList.Add(BdToGcj);
-                }
                 m_changeType = BdToGcj.Name;
-                ChangeCheckBoxState(m_changeType);
-            }
-            else
-            {
-                m_changeType = string.Empty;
-            }
-        }
-
-        private void ChangeCheckBoxState(string checkedName)
-        {
-            for (int i = 0; i < m_changeTypeList.Count; i++)
-            {
-                if (m_changeTypeList[i].Name.Equals(checkedName))
-                {
-                    m_changeTypeList[i].CheckState = CheckState.Checked;
-                }
-                else
-                {
-                    m_changeTypeList[i].CheckState = CheckState.Unchecked;
-                }
             }
         }
         #endregion
+        
 
-
-        #region 转换坐标
-
-
-        /// <summary>
-        /// 转换坐标
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <returns></returns>
-        private string[] ConvertCoord(string[] coord)
+        private void SetProgressBar(float progress)
         {
-            string[] result = coord;
-            PointLatLng pos = new PointLatLng(double.Parse(coord[1]), double.Parse(coord[0]));
-            PointLatLng newPos = new PointLatLng(0, 0);
-            switch (m_changeType)
+            progress *= 100;
+            if (ConvertProgressBar.InvokeRequired)
             {
-                case "WgsToGcj":
-                    newPos = ConvertGPS.gps84_To_Gcj02(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "WgsToBd":
-                    newPos = ConvertGPS.Gps84_To_bd09(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "GcjToWgs":
-                    newPos = ConvertGPS.gcj02_To_Gps84(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "GcjToBd":
-                    newPos = ConvertGPS.gcj02_To_Bd09(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "BdToWgs":
-                    newPos = ConvertGPS.bd09_To_Gps84(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "BdToGcj":
-                    newPos = ConvertGPS.bd09_To_Gcj02(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                default:
-                    break;
+                Action<int> actionDelegate = (pValue) => { this.ConvertProgressBar.Value = pValue; };
+                this.ConvertProgressBar.Invoke(actionDelegate, (int)progress);
             }
-            return result;
         }
 
-        /// <summary>
-        /// 转换坐标
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <returns></returns>
-        private string[] ConvertCoord(List<JToken> coord)
+        private void ConvertOver(object sender, string result)
         {
-            string[] result = new string[coord.Count];
-            result[0] = coord[0].ToString();
-            result[1] = coord[1].ToString();
-            PointLatLng pos = new PointLatLng(double.Parse(result[1]), double.Parse(result[0]));
-            PointLatLng newPos = new PointLatLng(0, 0);
-            switch (m_changeType)
+            m_changeResultText = result;
+            if (ChangeResultTextBox.InvokeRequired)
             {
-                case "WgsToGcj":
-                    newPos = ConvertGPS.gps84_To_Gcj02(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "WgsToBd":
-                    newPos = ConvertGPS.Gps84_To_bd09(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "GcjToWgs":
-                    newPos = ConvertGPS.gcj02_To_Gps84(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "GcjToBd":
-                    newPos = ConvertGPS.gcj02_To_Bd09(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "BdToWgs":
-                    newPos = ConvertGPS.bd09_To_Gps84(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                case "BdToGcj":
-                    newPos = ConvertGPS.bd09_To_Gcj02(pos);
-                    result[0] = newPos.Lng.ToString();
-                    result[1] = newPos.Lat.ToString();
-                    break;
-                default:
-                    break;
+                Action actionDelegate = () => {
+                    this.ChangeResultTextBox.Clear();
+                    this.ChangeResultTextBox.AppendText(m_changeResultText);
+                };
+                this.ChangeResultTextBox.Invoke(actionDelegate);
             }
-            return result;
+            MessageBox.Show("转换完成");
+            SetProgressBar(0);
         }
-        #endregion
     }
 }
